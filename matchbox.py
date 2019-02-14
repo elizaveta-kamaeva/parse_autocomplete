@@ -12,20 +12,23 @@ class Matchbox:
     def collect_matches(self):
         n = 0
         for pair in self.query_completion_list:
-            query_str, completion_str = pair[0], pair[1]
-            for sym in '!"#$%&()*+,-./:;<=>?@[\]^_`{|}~«»':
+            query_str = re.sub('([^a-zа-яё ]+)?\d+([^a-zа-яё ]+)?(?!-?[a-zа-яё])', '', pair[0], flags=re.I)
+            completion_str = re.sub('([^a-zа-яё ]+)?\d+([^a-zа-яё ]+)?(?!-?[a-zа-яё])', '', pair[1], flags=re.I)
+            for sym in '!"#$%&()*+,./:;<=>?@[\]^_`{|}~«»№':
                 query_str = query_str.replace(sym, '')
                 completion_str = completion_str.replace(sym, '')
                 query_str, completion_str = query_str.strip(), completion_str.strip()
-            # если подсказок нет или запрос - это число
-            if completion_str == 'NULL' or re.fullmatch('\d+', query_str):
+            # пропускает, если подсказок нет или запрос - это не буквы
+            if completion_str == 'NULL' or re.fullmatch('\W+', query_str):
                 n += 1
                 continue
 
             compare_obj = Compare(query_str, completion_str)
             Compare.calculate_weight(compare_obj)
             query_weight = compare_obj.max_obj.weight
-            if 1 < query_weight < 3:
+            query = compare_obj.max_obj.query
+            complete_piece = compare_obj.max_obj.complete
+            if 3 < query_weight <= 4 and (len(query) + len(complete_piece)) >= 8:
                 self.weight_qu_com.add((query_weight,
                                         compare_obj.max_obj.query,
                                         compare_obj.max_obj.complete,

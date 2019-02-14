@@ -32,7 +32,7 @@ Matchbox.collect_matches(matches_obj)
 outfile = open(outname, 'w', encoding='utf-8')
 outfile.write('{}\t{}\t{}\t{}\n'.format('probability', 'query', 'complete_suggestion', 'full_complete'))
 for quadrum in matches_obj.weight_qu_com:
-    outfile.write('{}:{}=={}-->{}'.format(quadrum[0],
+    outfile.write('{}:{}=={}:-->{}'.format(quadrum[0],
                                           quadrum[1],
                                           quadrum[2],
                                           quadrum[3]) + '\n')

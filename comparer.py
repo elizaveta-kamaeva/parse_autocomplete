@@ -20,19 +20,55 @@ class Compare:
         if len(query_list) < len(completion_list):
             weight_completepiece_dict = {}
 
-            # ходит по строке подсказок окном длиной в кол-во слов в запросе
-            for i in range(len(completion_list) - len(query_list)):
-                complete_piece = ' '.join(completion_list[i:i + len(query_list)])
+            # проверяет, не написано ли слово в неправильной раскладке
+            if not (re.fullmatch('[a-zA-Z\W]+', query_str) and
+                    re.fullmatch('[а-яА-ЯёЁ\W]+', completion_str)):
 
-                # проверяет, не написано ли слово в неправильной раскладке
-                if not (re.fullmatch('[a-zA-Z\W]+', query_str) and
-                        re.fullmatch('[а-яА-ЯёЁ\W]+', complete_piece)):
+                # ходит по строке подсказок окном длиной в кол-во слов в запросе
+                for i in range(len(completion_list) - len(query_list)):
+                    complete_piece = ' '.join(completion_list[i:i + len(query_list)])
 
                     # проверяет на недописанность
-                    if not (re.match(query_str, complete_piece) and (len(complete_piece) - len(query_str)) > 3):
-                        # fuzz_measure = fuzz.ratio(query_str, complete_piece)
+                    if not (re.match(query_str, complete_piece) and (len(complete_piece) - len(query_str)) > 2):
                         distance = damerau_levenshtein(query_str, complete_piece)
                         weight_completepiece_dict[distance] = complete_piece
+
+                # клеит слова в подсказках на тот случай, если в запросе ненужные пробелы
+                for i in range(len(completion_list)):
+                    for j in range(i + 1, len(completion_list) + 1):
+                        complete_piece = ''.join(completion_list[i:j])
+
+                        # проверяет на недописанность
+                        if not (re.match(query_str, complete_piece) and (
+                                len(complete_piece) - len(query_str)) > 2):
+                            distance = damerau_levenshtein(query_str, complete_piece)
+                            weight_completepiece_dict[distance] = ' '.join(completion_list[i:j])
+
+                # клеит слова в запросе, если в запросе слова без пробелов
+                for i in range(len(completion_list)):
+                    for j in range(i + 1, len(completion_list) + 1):
+                        complete_piece = ''.join(completion_list[i:j])
+
+                        # проверяет на недописанность
+                        if not (re.match(query_str, complete_piece) and (
+                                len(complete_piece) - len(query_str)) > 2):
+                            distance = damerau_levenshtein(query_str, complete_piece)
+                            weight_completepiece_dict[distance] = ' '.join(completion_list[i:j])
+
+                # клеит слова в запросе и высчитывает вероятность схожести со склееными словами в подсказке
+                query_str = ''.join(query_list)
+                for i in range(len(completion_list)):
+                    for j in range(i + 1, len(completion_list) + 1):
+                        complete_piece = ''.join(completion_list[i:j])
+
+                        # проверяет на недописанность
+                        if not (re.match(query_str, complete_piece) and (
+                                len(complete_piece) - len(query_str)) > 2):
+                            distance = damerau_levenshtein(query_str, complete_piece)
+                            weight_completepiece_dict[distance] = ' '.join(completion_list[i:j])
+
+
+
             if weight_completepiece_dict:
                 max_weight = min(weight_completepiece_dict.keys())
                 self.max_obj.weight = max_weight
