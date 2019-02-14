@@ -18,7 +18,7 @@ class Compare:
 
         # проверяет, есть ли в строке подсказок еще какие-то слова
         if len(query_list) < len(completion_list):
-            weight_complete_piece = {}
+            weight_completepiece_dict = {}
 
             # ходит по строке подсказок окном длиной в кол-во слов в запросе
             for i in range(len(completion_list) - len(query_list)):
@@ -32,12 +32,12 @@ class Compare:
                     if not (re.match(query_str, complete_piece) and (len(complete_piece) - len(query_str)) > 3):
                         # fuzz_measure = fuzz.ratio(query_str, complete_piece)
                         distance = damerau_levenshtein(query_str, complete_piece)
-                        weight_complete_piece[distance] = complete_piece
-            if weight_complete_piece:
-                max_weight = min(weight_complete_piece.keys())
+                        weight_completepiece_dict[distance] = complete_piece
+            if weight_completepiece_dict:
+                max_weight = min(weight_completepiece_dict.keys())
                 self.max_obj.weight = max_weight
                 self.max_obj.query = self.query_str
-                self.max_obj.complete = weight_complete_piece[max_weight]
+                self.max_obj.complete = weight_completepiece_dict[max_weight]
                 self.max_obj.init_complete = self.completion_str
 
         if len(query_list) == len(completion_list):
