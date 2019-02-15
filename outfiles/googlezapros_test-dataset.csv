@@ -1,0 +1,10 @@
+probability	query	complete_suggestion	full_complete
+1:Coffe time==coffee time:-->Coffe time
+1:coffetime==coffee time:-->coffetime
+1:спальняя кровать==спальная кровать:-->2 спальняя кровать
+2:на  кровать==кровать:-->120 на 200 кровать
+1:Стеллаж-шкаф==стеллаж шкаф:--> Стеллаж-шкаф
+1:tv-2a==tv 2a:-->tv-2a
+1:onega==omega:-->onega
+1:cтол трансформер==стол трансформер:-->cтол трансформер
+1:TV-2A==tv 2a:-->TV-2A

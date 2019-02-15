@@ -1,14 +1,14 @@
 import re
-# from fuzzywuzzy import fuzz
 from jellyfish._jellyfish import damerau_levenshtein_distance as damerau_levenshtein
 from customTypes import MatchData
 
 
 class Compare:
 
-    def __init__(self, query_str, completion_str):
+    def __init__(self, query_str, completion_str, init_str):
         self.query_str = query_str
         self.completion_str = completion_str
+        self.init_str = init_str
         self.max_obj = MatchData
 
     def calculate_weight(self):
@@ -22,7 +22,7 @@ class Compare:
 
             # проверяет, не написано ли слово в неправильной раскладке
             if not (re.fullmatch('[a-zA-Z\W]+', query_str) and
-                    re.fullmatch('[а-яА-ЯёЁ\W]+', completion_str)):
+                    re.fullmatch('[а-яА-ЯёЁ]+', completion_str)):
 
                 # ходит по строке подсказок окном длиной в кол-во слов в запросе
                 for i in range(len(completion_list) - len(query_list)):
@@ -67,18 +67,15 @@ class Compare:
                             distance = damerau_levenshtein(query_str, complete_piece)
                             weight_completepiece_dict[distance] = ' '.join(completion_list[i:j])
 
-
-
             if weight_completepiece_dict:
                 max_weight = min(weight_completepiece_dict.keys())
                 self.max_obj.weight = max_weight
                 self.max_obj.query = self.query_str
                 self.max_obj.complete = weight_completepiece_dict[max_weight]
-                self.max_obj.init_complete = self.completion_str
+                self.max_obj.init_complete = self.init_str
 
         if len(query_list) == len(completion_list):
-            # self.max_obj.weight = fuzz.partial_ratio(query_str, completion_str)
             self.max_obj.weight = damerau_levenshtein(query_str, completion_str)
             self.max_obj.query = self.query_str
             self.max_obj.complete = completion_str
-            self.max_obj.init_complete = self.completion_str
+            self.max_obj.init_complete = self.init_str
