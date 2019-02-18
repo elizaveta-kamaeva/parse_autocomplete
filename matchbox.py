@@ -1,6 +1,7 @@
 import re
 from comparer import Compare
 from checker import Checker
+from normalizer import normalize
 
 
 class Matchbox:
@@ -16,13 +17,9 @@ class Matchbox:
 
         n = 0
         for pair in self.query_completion_list:
-            init_str = pair[0]
-            query_str = re.sub('\S*\d+(\S*\d+)*\S*', '', pair[0], flags=re.I)
-            completion_str = re.sub('\S*\d+(\S*\d+)*\S*', '', pair[1], flags=re.I)
-            for sym in '!"#$%&()*+,./:;<=>?@[\]^_`{|}~«»№':
-                query_str = query_str.replace(sym, ' ')
-                completion_str = completion_str.replace(sym, ' ')
-                query_str, completion_str = query_str.strip(), completion_str.strip()
+            init_str = pair[1]
+            query_str, completion_str = normalize(pair)
+
             # пропускает, если подсказок нет или запрос - это не буквы
             if completion_str == 'NULL' or re.fullmatch('\W+', query_str):
                 n += 1
@@ -55,5 +52,3 @@ class Matchbox:
                                    known_completions[query][2],
                                    known_completions[query][1]))
         print('Total number of lines:', n)
-
-

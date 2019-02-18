@@ -21,11 +21,11 @@ def get_feed(filename):
     for line in text_list:
         text += re.sub('<.+?>', ' ', line, flags=re.DOTALL) + '\n'
     feed_set = set()
-    for item in re.split('\W+', text):
+    for item in re.split('[\W_]+', text):
         if item and \
                 not (re.match('full_', item) or
                      re.fullmatch('\d+', item)):
-            feed_set.add(item)
+            feed_set.add(item.lower())
 
     print('{} unique feed words from {} found.'.format(len(feed_set), filename))
     return feed_set
