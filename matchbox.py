@@ -23,6 +23,8 @@ class Matchbox:
             # пропускает, если подсказок нет или запрос - это не буквы
             if completion_str == 'NULL' or re.fullmatch('\W+', query_str):
                 n += 1
+                if n % 3000 == 0:
+                    print(n, 'lines processed')
                 continue
 
             compare_obj = Compare(query_str, completion_str, init_str)
@@ -35,10 +37,10 @@ class Matchbox:
             # выбирает пары с нужным расстоянием Левенштейна
             if 0 <= query_weight <= 2:
                 if Checker.words_in_feed(check_obj, complete_piece, query):
-                    if query in known_completions:
+                    if query in known_completions.keys():
                         if known_completions[query] != (query_weight, init_completion, complete_piece):
                             if query_weight < known_completions[query][0]:
-                                known_completions[complete_piece] = (query_weight, init_completion, complete_piece)
+                                known_completions[query] = (query_weight, init_completion, complete_piece)
                     else:
                         known_completions[query] = (query_weight, init_completion, complete_piece)
 

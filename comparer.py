@@ -13,7 +13,7 @@ class Compare:
 
     def calculate_weight(self):
         query_str = re.sub('\s{2,}', ' ', self.query_str.lower())
-        completion_str = re.sub('\s{2,}', ' ', self.completion_str)
+        completion_str = re.sub('\s{2,}', ' ', self.completion_str.lower())
         query_list, completion_list = query_str.split(), completion_str.split()
 
         # проверяет, есть ли в строке подсказок еще какие-то слова
@@ -28,44 +28,23 @@ class Compare:
                 for i in range(len(completion_list) - len(query_list)):
                     complete_piece = ' '.join(completion_list[i:i + len(query_list)])
 
-                    # проверяет на недописанность
-                    if not (re.match(query_str, complete_piece) and (len(complete_piece) - len(query_str)) > 2):
-                        distance = damerau_levenshtein(query_str, complete_piece)
-                        weight_completepiece_dict[distance] = complete_piece
+                    distance = damerau_levenshtein(query_str, complete_piece)
+                    weight_completepiece_dict[distance] = complete_piece
 
                 # клеит слова в подсказках на тот случай, если в запросе ненужные пробелы
                 for i in range(len(completion_list)):
                     for j in range(i + 1, len(completion_list) + 1):
                         complete_piece = ''.join(completion_list[i:j])
-
-                        # проверяет на недописанность
-                        if not (re.match(query_str, complete_piece) and (
-                                len(complete_piece) - len(query_str)) > 2):
-                            distance = damerau_levenshtein(query_str, complete_piece)
-                            weight_completepiece_dict[distance] = ' '.join(completion_list[i:j])
-
-                # клеит слова в запросе, если в запросе слова без пробелов
-                for i in range(len(completion_list)):
-                    for j in range(i + 1, len(completion_list) + 1):
-                        complete_piece = ''.join(completion_list[i:j])
-
-                        # проверяет на недописанность
-                        if not (re.match(query_str, complete_piece) and (
-                                len(complete_piece) - len(query_str)) > 2):
-                            distance = damerau_levenshtein(query_str, complete_piece)
-                            weight_completepiece_dict[distance] = ' '.join(completion_list[i:j])
+                        distance = damerau_levenshtein(query_str, complete_piece)
+                        weight_completepiece_dict[distance] = ' '.join(completion_list[i:j])
 
                 # клеит слова в запросе и высчитывает вероятность схожести со склееными словами в подсказке
                 query_str = ''.join(query_list)
                 for i in range(len(completion_list)):
                     for j in range(i + 1, len(completion_list) + 1):
                         complete_piece = ''.join(completion_list[i:j])
-
-                        # проверяет на недописанность
-                        if not (re.match(query_str, complete_piece) and (
-                                len(complete_piece) - len(query_str)) > 2):
-                            distance = damerau_levenshtein(query_str, complete_piece)
-                            weight_completepiece_dict[distance] = ' '.join(completion_list[i:j])
+                        distance = damerau_levenshtein(query_str, complete_piece)
+                        weight_completepiece_dict[distance] = ' '.join(completion_list[i:j])
 
             if weight_completepiece_dict:
                 max_weight = min(weight_completepiece_dict.keys())
