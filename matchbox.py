@@ -14,7 +14,7 @@ class Matchbox:
         self.tofix_manually = set()
 
     def collect_matches(self):
-        check_obj = Checker(self.feed_set)
+        # check_obj = Checker(self.feed_set)
         known_completions = {}
 
         n = 0
@@ -38,33 +38,33 @@ class Matchbox:
 
             # выбирает пары с нужным расстоянием Левенштейна
             if 0 <= query_weight <= 2:
-                if not Checker.words_in_feed(check_obj, complete_piece, query):
-                    if query in known_completions.keys():
+                # if Checker.words_in_feed(check_obj, complete_piece, query):
+                if query in known_completions.keys():
 
-                        # восстанавливает знаки препинания
-                        restored_tuple = restore_punctuation(query, known_completions[query])
-                        if restored_tuple:
-                            if known_completions[query] != restored_tuple:
-                                if query_weight < known_completions[query][0]:
-                                    known_completions[query] = restored_tuple
-                                    self.restored.add((query_weight, query,
-                                                       restored_tuple[2], init_completion))
-                        # если не получилось восстановить пунктуацию
-                        else:
-                            known_completions[query] = (query_weight, init_completion, complete_piece)
-                            self.tofix_manually.add((query_weight, query, complete_piece, init_completion))
-
-                    # если такого исправления еще не встречалось
+                    # восстанавливает знаки препинания
+                    restored_tuple = restore_punctuation(query, known_completions[query])
+                    if restored_tuple:
+                        if known_completions[query] != restored_tuple:
+                            if query_weight < known_completions[query][0]:
+                                known_completions[query] = restored_tuple
+                                self.restored.add((query_weight, query,
+                                                   restored_tuple[2], init_completion))
+                    # если не получилось восстановить пунктуацию
                     else:
-                        restored_tuple = restore_punctuation(query, (query_weight, init_completion, complete_piece))
-                        if restored_tuple:
-                            known_completions[query] = restored_tuple
-                            self.restored.add((query_weight, query,
-                                               restored_tuple[2], init_completion))
-                        # если не получилось восстановить пунктуацию
-                        else:
-                            known_completions[query] = (query_weight, init_completion, complete_piece)
-                            self.tofix_manually.add((query_weight, query, complete_piece, init_completion))
+                        known_completions[query] = (query_weight, init_completion, complete_piece)
+                        self.tofix_manually.add((query_weight, query, complete_piece, init_completion))
+
+                # если такого исправления еще не встречалось
+                else:
+                    restored_tuple = restore_punctuation(query, (query_weight, init_completion, complete_piece))
+                    if restored_tuple:
+                        known_completions[query] = restored_tuple
+                        self.restored.add((query_weight, query,
+                                           restored_tuple[2], init_completion))
+                    # если не получилось восстановить пунктуацию
+                    else:
+                        known_completions[query] = (query_weight, init_completion, complete_piece)
+                        self.tofix_manually.add((query_weight, query, complete_piece, init_completion))
 
             n += 1
             if n % 3000 == 0:

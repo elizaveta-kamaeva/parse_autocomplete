@@ -48,8 +48,8 @@ outname_restored = 'outfiles\\' + filename.split('.')[0] + '-dataset_restored-1.
 outname_tofix = 'outfiles\\' + filename.split('.')[0] + '-dataset_tofix-1.csv'
 
 query_completion_list = get_compare_data(filename)
-feed = get_feed(feed_name)
-
+# feed = get_feed(feed_name)
+feed = set()
 
 matches_obj = Matchbox(query_completion_list, feed)
 t = time()
