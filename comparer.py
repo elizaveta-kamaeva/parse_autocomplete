@@ -1,19 +1,19 @@
 import re
 from jellyfish._jellyfish import damerau_levenshtein_distance as damerau_levenshtein
+# from pyxdameraulevenshtein import damerau_levenshtein_distance as damerau_levenshtein
 from customTypes import MatchData
 
 
 class Compare:
 
-    def __init__(self, query_str, completion_str, init_str):
+    def __init__(self, query_str, completion_str):
         self.query_str = query_str
         self.completion_str = completion_str
-        self.init_str = init_str
         self.max_obj = MatchData
 
     def calculate_weight(self):
-        query_str = re.sub('\s{2,}', ' ', self.query_str.lower())
-        completion_str = re.sub('\s{2,}', ' ', self.completion_str.lower())
+        query_str = self.query_str.lower()
+        completion_str = self.completion_str.lower()
         query_list, completion_list = query_str.split(), completion_str.split()
 
         # проверяет, есть ли в строке подсказок еще какие-то слова
@@ -27,7 +27,6 @@ class Compare:
                 # ходит по строке подсказок окном длиной в кол-во слов в запросе
                 for i in range(len(completion_list) - len(query_list)):
                     complete_piece = ' '.join(completion_list[i:i + len(query_list)])
-
                     distance = damerau_levenshtein(query_str, complete_piece)
                     weight_completepiece_dict[distance] = complete_piece
 
@@ -51,10 +50,8 @@ class Compare:
                 self.max_obj.weight = max_weight
                 self.max_obj.query = self.query_str
                 self.max_obj.complete = weight_completepiece_dict[max_weight]
-                self.max_obj.init_complete = self.init_str
 
         if len(query_list) == len(completion_list):
             self.max_obj.weight = damerau_levenshtein(query_str, completion_str)
             self.max_obj.query = self.query_str
             self.max_obj.complete = completion_str
-            self.max_obj.init_complete = self.init_str

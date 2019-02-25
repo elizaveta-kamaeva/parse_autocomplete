@@ -17,6 +17,8 @@ def normalize(pair):
     for sym in '()[]{}/\\':
         query_str = query_str.replace(sym, ' ')
         completion_str = completion_str.replace(sym, ' ')
+        query_str = re.sub('\s{2,}', ' ', query_str)
+        completion_str = re.sub('\s{2,}', ' ', completion_str)
         query_str, completion_str = query_str.strip(), completion_str.strip()
 
     return query_str, completion_str
