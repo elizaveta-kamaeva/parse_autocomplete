@@ -6,9 +6,10 @@ from customTypes import MatchData
 
 class Compare:
 
-    def __init__(self, query_str, completion_str):
+    def __init__(self, query_str, completion_str, init_str):
         self.query_str = query_str
         self.completion_str = completion_str
+        self.init_str = init_str
         self.max_obj = MatchData
 
     def calculate_weight(self):
@@ -50,8 +51,10 @@ class Compare:
                 self.max_obj.weight = max_weight
                 self.max_obj.query = self.query_str
                 self.max_obj.complete = weight_completepiece_dict[max_weight]
+                self.max_obj.init_str = self.init_str
 
         if len(query_list) == len(completion_list):
             self.max_obj.weight = damerau_levenshtein(query_str, completion_str)
             self.max_obj.query = self.query_str
             self.max_obj.complete = completion_str
+            self.max_obj.init_str = self.init_str

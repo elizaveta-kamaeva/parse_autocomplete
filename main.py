@@ -1,7 +1,8 @@
+import os
 import re
 from time import time
 import pandas as pd
-from matchbox import Matchbox
+from controller import Controller
 
 
 def get_compare_data(filename):
@@ -14,49 +15,28 @@ def get_compare_data(filename):
     return qu_au_list
 
 
-def get_feed(filename):
-    filepath = 'infiles\\' + filename
-    text_list = open(filepath, 'r', encoding='utf-8').readlines()
-    text = ''
-    for line in text_list:
-        text += re.sub('<.+?>', ' ', line, flags=re.DOTALL) + '\n'
-    feed_set = set()
-    for item in re.split('[\W_]+', text):
-        if item and \
-                not (re.match('full_', item) or
-                     re.fullmatch('\d+', item)):
-            feed_set.add(item.lower())
-
-    print('{} unique feed words from {} found.'.format(len(feed_set), filename))
-    return feed_set
+def remove_old():
+    try:
+        os.remove(outname_restored)
+        os.remove(outname_tofix)
+        print('Old files removed:', outname_restored, outname_tofix)
+    except FileNotFoundError:
+        pass
 
 
-def write_file(outname, tuple_set):
-    outfile = open(outname, 'w', encoding='utf-8')
-    outfile.write('{}\t{}\t{}\t{}\n'.format('distance', 'query', 'complete_suggestion', 'full_complete'))
-    for quadrum in tuple_set:
-        outfile.write('{}\t{}\t{}\t{}\n'.format(quadrum[0],
-                                                quadrum[1],
-                                                quadrum[2],
-                                                quadrum[3]))
-    outfile.close()
+filename = '13_boscoutlet.csv'
+outname_restored = 'outfiles\\' + filename.split('.')[0] + '-dataset_restored.csv'
+outname_tofix = 'outfiles\\' + filename.split('.')[0] + '-dataset_tofix.csv'
+remove_old()
 
-
-filename = 'yazapros.csv'
-feed_name = 'export_full_all_1.xml'
-outname_restored = 'outfiles\\' + filename.split('.')[0] + '-dataset_restored-1.csv'
-outname_tofix = 'outfiles\\' + filename.split('.')[0] + '-dataset_tofix-1.csv'
-
-query_completion_list = get_compare_data(filename)
-# feed = get_feed(feed_name)
-feed = set()
-
-matches_obj = Matchbox(query_completion_list, feed)
 t = time()
-Matchbox.collect_matches(matches_obj)
+query_completion_list = get_compare_data(filename)
 
-write_file(outname_restored, matches_obj.restored)
-write_file(outname_tofix, matches_obj.tofix_manually)
+control_obj = Controller(query_completion_list, outname_restored, outname_tofix)
+control_obj.process_butches()
 
+print('Total number of lines:', control_obj.n)
 seconds = round(time() - t)
-print('Process took {0} minute{2} {1} seconds.'.format(seconds // 60, seconds % 60, '' if seconds // 60 == 1 else 's'))
+print('Process took {0} minute{2} {1} seconds.'.format(seconds // 60,
+                                                       seconds % 60,
+                                                       '' if seconds // 60 == 1 else 's'))
