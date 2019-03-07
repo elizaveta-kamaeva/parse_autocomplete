@@ -4,8 +4,7 @@ from normalizer import normalize
 
 
 class Scales:
-    def __init__(self, query_completion_list):
-        self.query_completion_list = query_completion_list
+    def __init__(self):
         self.light_match = ''
 
     def weigh_match(self, pair):

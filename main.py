@@ -24,16 +24,18 @@ def remove_old():
         pass
 
 
-filename = '13_boscoutlet.csv'
+filename = 'googlezapros.csv'
 outname_restored = 'outfiles\\' + filename.split('.')[0] + '-dataset_restored.csv'
 outname_tofix = 'outfiles\\' + filename.split('.')[0] + '-dataset_tofix.csv'
 remove_old()
 
 t = time()
-query_completion_list = get_compare_data(filename)
+query_completion_file = open('infiles\\' + filename, 'r', encoding='utf-8')
 
-control_obj = Controller(query_completion_list, outname_restored, outname_tofix)
+control_obj = Controller(query_completion_file, outname_restored, outname_tofix)
 control_obj.process_butches()
+
+query_completion_file.close()
 
 print('Total number of lines:', control_obj.n)
 seconds = round(time() - t)

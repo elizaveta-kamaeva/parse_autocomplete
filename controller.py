@@ -4,8 +4,8 @@ from writer import Writer
 
 
 class Controller:
-    def __init__(self, query_completion_list, outname_restored, outname_tofix):
-        self.query_completion_list = query_completion_list
+    def __init__(self, query_completion_file, outname_restored, outname_tofix):
+        self.query_completion_file = query_completion_file
 
         self.n = 0
         self.reporting = 3000
@@ -16,11 +16,15 @@ class Controller:
         self.outname_tofix = outname_tofix
 
     def process_butches(self):
-        scales_obj = Scales(self.query_completion_list)
+        scales_obj = Scales()
         agregate_obj = Agregator({})
         write_obj = Writer(self.outname_restored, self.outname_tofix)
 
-        for pair in self.query_completion_list:
+        for line in self.query_completion_file:
+            pair = line.strip().split(';')
+            if not len(pair) == 2:
+                continue
+
             scales_obj.weigh_match(pair)
             if scales_obj.light_match:
 
