@@ -45,5 +45,5 @@ class Controller:
             self.n += 1
             # делает отчет
             if self.n % self.reporting == 0:
-                print(self.n, 'lines processed')
+                print('{:.0f}K lines processed'.format(self.n / 1000))
         write_obj.write_matches(agregate_obj.restored, agregate_obj.tofix_manually)

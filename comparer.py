@@ -53,7 +53,7 @@ class Compare:
                 self.max_obj.complete = weight_completepiece_dict[max_weight]
                 self.max_obj.init_str = self.init_str
 
-        if len(query_list) == len(completion_list):
+        else:
             self.max_obj.weight = damerau_levenshtein(query_str, completion_str)
             self.max_obj.query = self.query_str
             self.max_obj.complete = completion_str
