@@ -24,7 +24,7 @@ def remove_old():
         pass
 
 
-filename = '7_bosco.csv'
+filename = '26_san.csv'
 outname_restored = 'outfiles\\' + filename.split('.')[0] + '-dataset_restored.csv'
 outname_tofix = 'outfiles\\' + filename.split('.')[0] + '-dataset_tofix.csv'
 remove_old()

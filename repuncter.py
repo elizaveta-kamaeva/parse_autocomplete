@@ -14,8 +14,8 @@ class Repuncter():
 
         # pure_query_words = re.findall('[a-zа-яёĀ-ɏà-ž]+|\d+', query, flags=re.IGNORECASE)
         # pure_complete_words = re.findall('[a-zа-яёĀ-ɏà-ž]+|\d+', complete_piece, flags=re.IGNORECASE)
-        pure_query_words = re.findall('[^\d\W]+|\d+', query, flags=re.IGNORECASE)
-        pure_complete_words = re.findall('[^\d\W]+|\d+', complete_piece, flags=re.IGNORECASE)
+        pure_query_words = re.findall('[^\d\W_]+|\d+', query, flags=re.IGNORECASE)
+        pure_complete_words = re.findall('[^\d\W_]+|\d+', complete_piece, flags=re.IGNORECASE)
         pure_query_separators = []
         prev_part = pure_query_words[0]
 

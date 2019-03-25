@@ -1,4 +1,3 @@
-import re
 from repuncter import Repuncter
 from checker import can_write
 
