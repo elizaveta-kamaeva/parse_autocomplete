@@ -24,8 +24,8 @@ class Agregator:
             if query in self.known_completions.keys():
                 repunct_obj.restore_punctuation(query, self.known_completions[query])
                 restored_tuple = repunct_obj.repunction_result
-                # если восстановил пунктуацию или запрос без пробелов идентичен подсказке без пробелов
-                if repunct_obj.punctuation_restored or query_weight == 0:
+                # если восстановил пунктуацию
+                if repunct_obj.punctuation_restored:
                     if self.known_completions[query] != restored_tuple:
                         if query_weight < self.known_completions[query][0]:
                             prev_tuple = self.known_completions[query]
@@ -36,7 +36,7 @@ class Agregator:
                                                       prev_tuple[1], prev_tuple[2]))
                             self.restored.add((query_weight, query,
                                                restored_tuple[2], init_completion))
-                # если не получилось восстановить пунктуацию и расстояние там больше 0
+                # если не получилось восстановить пунктуацию
                 else:
                     self.known_completions[query] = restored_tuple
                     self.tofix_manually.add((query_weight, query,
@@ -48,11 +48,11 @@ class Agregator:
                                                 (query_weight, init_completion, complete_piece))
                 restored_tuple = repunct_obj.repunction_result
                 # если восстановил пунктуацию или запрос без пробелов идентичен подсказке без пробелов
-                if repunct_obj.punctuation_restored or query_weight == 0:
+                if repunct_obj.punctuation_restored:
                     self.known_completions[query] = restored_tuple
                     self.restored.add((query_weight, query,
                                        restored_tuple[2], init_completion))
-                # если не получилось восстановить пунктуацию и расстояние там больше 0
+                # если не получилось восстановить пунктуацию
                 else:
                     self.known_completions[query] = (query_weight,
                                                      init_completion,

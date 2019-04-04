@@ -12,8 +12,6 @@ class Repuncter():
         complete_piece = candidate_tuple[2]
         repuncted = ''
 
-        # pure_query_words = re.findall('[a-zа-яёĀ-ɏà-ž]+|\d+', query, flags=re.IGNORECASE)
-        # pure_complete_words = re.findall('[a-zа-яёĀ-ɏà-ž]+|\d+', complete_piece, flags=re.IGNORECASE)
         pure_query_words = re.findall('[^\d\W_]+|\d+', query, flags=re.IGNORECASE)
         pure_complete_words = re.findall('[^\d\W_]+|\d+', complete_piece, flags=re.IGNORECASE)
         pure_query_separators = []
@@ -28,14 +26,8 @@ class Repuncter():
                                      '[\W_]*' +
                                      pure_query_words[i], query)
                 prevNsepNnextword = prevNsepNnextword.group()
-                prev_deleted = re.sub(prev_part, '', prevNsepNnextword, count=1)
-                # sep = re.sub('[a-zа-яёA-ZА-ЯЁĀ-ɏà-ž\d]+', '', prev_deleted)
-                sep = re.sub('[^_\W]+', '', prev_deleted)
-
-                # sep = re.sub(prev_part, '', re.sub('[a-zа-яёA-ZА-ЯЁĀ-ɏà-ž\d]+', '',
-                #              re.search(prev_part + pure_query_words[i] + '[\W_]*' + pure_query_words[i+1],
-                #                        query).group(),
-                #              flags=re.IGNORECASE), count=1)
+                nextword = re.sub(prev_part, '', prevNsepNnextword, count=1)
+                sep = re.sub('[^_\W]+', '', nextword)
                 pure_query_separators.append(sep)
                 prev_sep = sep
                 # если предыдущий разделитель - спецзнак в RE, то экранирует его
@@ -66,7 +58,7 @@ class Repuncter():
                 repuncted += pure_query_separators[i]
             repuncted += pure_complete_words[-1]
 
-            self.repunction_result = (weight, init_completion, complete_piece)
+            self.repunction_result = (weight, init_completion, repuncted)
             self.punctuation_restored = True
         else:
-            self.repunction_result = (weight, init_completion, repuncted)
+            self.repunction_result = (weight, init_completion, complete_piece)
